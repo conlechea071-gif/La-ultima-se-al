@@ -1,0 +1,29 @@
+{
+  "name": "la-ultima-senal-server",
+  "version": "1.0.0",
+  "description": "LA ÚLTIMA SEÑAL: juego web de terror multijugador (página + servidor Node.js + Socket.IO en una sola dirección)",
+  "main": "src/server.js",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "build:client": "node scripts/build-client.js",
+    "test": "node test/rooms.test.js && node test/http.test.js && node test/tls.test.js && node test/net.ws.test.js && node test/client.integration.js && node test/client.solo.test.js",
+    "test:logic": "node test/rooms.test.js",
+    "test:http": "node test/http.test.js && node test/tls.test.js",
+    "test:ws": "node test/net.ws.test.js",
+    "test:client": "node test/client.integration.js && node test/client.solo.test.js",
+    "test:socketio": "node test/e2e.socketio.js",
+    "check": "node scripts/check-deploy.js"
+  },
+  "dependencies": {
+    "socket.io": "^4.7.5",
+    "three": "0.128.0"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.7.5",
+    "ws": "^8.17.0"
+  }
+}

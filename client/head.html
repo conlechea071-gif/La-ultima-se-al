@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>LA ÚLTIMA SEÑAL — El Bosque Paranormal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050607"><meta name="description" content="LA ÚLTIMA SEÑAL: terror cooperativo en un bosque paranormal. Juega en tu navegador, solo o con hasta 20 jugadores.">
+<meta property="og:title" content="LA ÚLTIMA SEÑAL"><meta property="og:description" content="Terror multijugador en el navegador. Uno de vosotros es el monstruo."><link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+:root{--bg:#04060a;--fg:#d8d4c4;--mut:#8a948c;--red:#a01f1f;color-scheme:dark}
+*{box-sizing:border-box;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;overscroll-behavior:none;background:var(--bg);color:var(--fg);font-family:Georgia,'Times New Roman',serif;overflow:hidden;touch-action:none}
+#game,#game canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+#vig{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 42%,#000 135%)}
+#cap{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(120,0,0,.2),rgba(150,0,0,.85));opacity:0}
+#blk{position:fixed;inset:0;pointer-events:none;background:#000;opacity:0}
+#capt{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-size:clamp(22px,5vw,44px);letter-spacing:.3em;color:#a01f1f;opacity:0;transition:opacity .6s;z-index:3}
+.ov{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(2,3,5,.72);backdrop-filter:blur(2px);z-index:5;padding:16px;overflow:auto;text-align:center}
+.ov[hidden],#hud[hidden]{display:none}
+h1{font-weight:400;letter-spacing:.3em;font-size:clamp(26px,6vw,56px);margin:0 0 4px;text-shadow:0 0 24px var(--red)}
+.sub{color:var(--mut);letter-spacing:.16em;font-size:12px;line-height:1.7}
+button.b{background:rgba(20,24,22,.65);border:1px solid #2c342e;color:var(--fg);padding:11px 0;width:min(320px,82vw);letter-spacing:.22em;font:inherit;font-size:14px;cursor:pointer}
+button.b:hover,button.b:active{border-color:var(--red);color:#fff;background:rgba(160,31,31,.22)}
+#msg{color:var(--mut);font-size:13px;min-height:18px;max-width:440px}input[type=range]{width:min(260px,70vw)}
+#hud{position:fixed;inset:0;pointer-events:none;padding:calc(env(safe-area-inset-top) + 12px) 14px 14px;font-size:14px;text-shadow:0 0 5px #000}
+#role{font-size:12px;letter-spacing:.14em;color:#d8b0a0;margin-top:3px}#net{font-size:11px;margin-top:2px}
+input[type=text],input:not([type]){background:#0c0f0d;border:1px solid #2c342e;color:var(--fg);padding:9px;font:inherit;width:min(320px,82vw);user-select:text;-webkit-user-select:text}
+.row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:90vw}.chip{padding:6px 9px;background:#101612;border:1px solid #2c342e;color:var(--fg);font:inherit;font-size:12px;cursor:pointer}.on{border-color:var(--red)!important;background:rgba(160,31,31,.3)!important}.mx{width:48px!important}button.b.sm{padding:8px 6px;font-size:12px;letter-spacing:.06em;width:min(320px,82vw)}
+#rooms{display:flex;flex-direction:column;gap:5px;color:var(--mut);font-size:13px;max-height:120px;overflow:auto;align-items:center}#plist{display:flex;flex-direction:column;gap:3px;font-size:14px;max-height:200px;overflow:auto}#end2l{font-size:13px;color:var(--mut);max-height:160px;overflow:auto}
+#cnt{letter-spacing:.12em;font-size:15px}#run{color:var(--mut);font-size:12px;letter-spacing:.2em;margin-top:3px}
+#cross{position:fixed;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:rgba(220,220,200,.45)}
+#sub{position:fixed;left:50%;bottom:12%;transform:translateX(-50%);width:min(640px,90vw);text-align:center;font-style:italic}
+#prompt{position:fixed;left:50%;top:58%;transform:translateX(-50%);color:#eadfc0;letter-spacing:.1em}
+#tc{display:none}.touch #tc{display:block}
+#stick{position:fixed;left:24px;bottom:calc(env(safe-area-inset-bottom) + 30px);width:100px;height:100px;border:1px solid #3a423d;border-radius:50%;opacity:.5}
+.tb{position:fixed;width:56px;height:56px;border-radius:50%;border:1px solid #4a524c;background:rgba(10,12,12,.6);color:var(--fg);display:flex;align-items:center;justify-content:center;font-size:11px;z-index:4}
+</style></head><body>
+<div id="loading" style="position:fixed;inset:0;z-index:50;background:#050607;color:#8a948c;display:flex;align-items:center;justify-content:center;letter-spacing:.3em;font-family:Georgia,serif">CARGANDO…</div><noscript>Este juego necesita JavaScript.</noscript>
+<div id="game"></div><div id="vig"></div><div id="cap"></div><div id="blk"></div><div id="capt">TE HAN ATRAPADO</div>
+<div id="hud" hidden><div id="cnt"></div><div id="run"></div><div id="role"></div><div id="net"></div><div id="cross"></div><div id="prompt"></div><div id="sub"></div></div>
+<div id="tc"><div id="stick"></div>
+<div class="tb" id="bE" style="right:24px;bottom:calc(env(safe-area-inset-bottom) + 112px)">E</div>
+<div class="tb" id="bF" style="right:96px;bottom:calc(env(safe-area-inset-bottom) + 52px)">LUZ</div>
+<div class="tb" id="bR" style="right:24px;bottom:calc(env(safe-area-inset-bottom) + 36px);font-size:10px">CORRER</div>
+<div class="tb" id="bT" style="right:96px;bottom:calc(env(safe-area-inset-bottom) + 120px);display:none">T</div>
+<div class="tb" id="bP" style="right:14px;top:calc(env(safe-area-inset-top) + 10px);width:42px;height:42px">II</div></div>
+<div class="ov" id="menu"><h1>LA ÚLTIMA SEÑAL</h1><div class="sub">EL BOSQUE PARANORMAL · v4 · tormenta nocturna</div>
+<button class="b" id="go">JUGAR</button>
+<button class="b" id="mpb">MULTIJUGADOR</button>
+<button class="b" id="ocfg">CONFIGURACIÓN</button>
+<button class="b" data-m="Créditos: dirección, diseño y programación — tu equipo. Motor: three.js. Sonido y música generados por código. Monstruo original inspirado en tu referencia.">CRÉDITOS</button>
+<div id="msg"></div><div class="sub">WASD mover · Ratón mirar · SHIFT alterna correr/caminar · E recoger · F linterna · Esc pausa<br>Móvil: joystick izquierdo, arrastra a la derecha para mirar, botón CORRER alterna. Mejor en horizontal y con auriculares.</div></div>
+<div class="ov" id="mp" hidden><h1 style="font-size:28px">MULTIJUGADOR</h1><input id="nick" maxlength="14" placeholder="Tu apodo (2–14)"><div class="sub">PERSONAJE</div><div class="row" id="chars"></div>
+<div class="sub">JUGADORES MÁXIMOS (anfitrión)</div><div class="row"><button class="chip mx" data-v="2">2</button><button class="chip mx on" data-v="5">5</button><button class="chip mx" data-v="6">6</button><button class="chip mx" data-v="10">10</button><button class="chip mx" data-v="20">20</button></div>
+<label class="sub"><input type="checkbox" id="pubc" checked style="width:auto"> sala pública (visible al buscar)</label><button class="b" id="create">CREAR SALA</button>
+<div class="row"><input id="code" maxlength="8" placeholder="Código de invitación" style="width:180px"><button class="b sm" id="join" style="width:110px">UNIRSE</button></div>
+<div class="sub">BUSCAR SALAS</div><div id="rooms"></div><button class="b sm" id="refresh" style="width:160px">ACTUALIZAR</button><div id="mpmsg" class="sub"></div><button class="b" id="mpback">VOLVER</button></div>
+<div class="ov" id="wait" hidden><h1 style="font-size:26px">SALA DE ESPERA</h1><div class="sub">CÓDIGO DE INVITACIÓN</div><div id="wcode" style="font-size:34px;letter-spacing:.3em;user-select:text"></div><div id="wname" class="sub"></div><div id="pcount" class="sub"></div><div id="plist"></div><div id="wmsg" class="sub"></div>
+<button class="b" id="startbtn" hidden>INICIAR PARTIDA</button><button class="b" id="leave">SALIR DE LA SALA</button></div>
+<div class="ov" id="end2" hidden><h1 id="end2t" style="font-size:34px"></h1><div class="sub" id="end2s"></div><div id="end2l"></div><div class="sub">En unos segundos volverás a la sala de espera.</div><button class="b" id="again2">ACEPTAR</button></div>
+<div class="ov" id="cfg" hidden><h1 style="font-size:30px">CONFIGURACIÓN</h1><button class="b qbtn">GRÁFICOS</button><button class="b" id="fsb">PANTALLA COMPLETA</button><div class="sub">VOLUMEN</div><input type="range" id="vol" min="0" max="100"><button class="b" id="bcfg">VOLVER</button></div>
+<div class="ov" id="pause" hidden><h1 style="font-size:32px">PAUSA</h1><button class="b" id="resume">CONTINUAR</button><button class="b qbtn">GRÁFICOS</button><button class="b" id="pcfg">VOLUMEN</button><button class="b" id="quit">SALIR AL MENÚ</button></div>
+<div class="ov" id="done" hidden><h1 style="font-size:34px">MISIÓN COMPLETADA</h1><div class="sub">Los 29 papeles están contigo.<br>La señal enmudece… por ahora.</div><button class="b" id="again">VOLVER A JUGAR</button></div>
+<!--SCRIPTS-->

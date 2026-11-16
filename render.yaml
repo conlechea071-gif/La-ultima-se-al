@@ -1,0 +1,22 @@
+# Blueprint de Render: "New + > Blueprint" y elige tu repositorio. Render crea el servicio con HTTPS y WebSocket seguro.
+services:
+  - type: web
+    name: la-ultima-senal          # tu URL será https://<este-nombre>.onrender.com (si está libre; si no, Render añade un sufijo)
+    runtime: node
+    plan: free                     # el plan gratuito "duerme" tras ~15 min sin visitas y pierde las salas; usa "starter" para jugar en serio
+    region: frankfurt              # elige la más cercana a tus jugadores (oregon, ohio, frankfurt, singapore, virginia)
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "20"
+      - key: FORCE_HTTPS
+        value: "1"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: MAX_CONN_PER_IP
+        value: "40"
